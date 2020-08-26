@@ -24,27 +24,31 @@ export class Action {
   async listLabelsOnIssue(token: string): Promise<string[]> {
     // Fetch the list of labels attached to the issue that
     // triggered the workflow
-    let client = github.getOctokit(token)
+    const client = github.getOctokit(token)
 
-    const opts = client.issues.listLabelsOnIssue.endpoint.merge({
+    const labels = await client.paginate(client.issues.listLabelsOnIssue, {
       ...this.context.repo,
       issue_number: this.context.issue.number
     })
 
-    return await (await client.paginate<any>(opts)).reduce(l => l.name)
+    return labels.map(label => label.name)
   }
 
-  extractTextFromLabels(labels: string[], pattern: SafeRegExp, index: number) {
-    let substrings: string[] = new Array()
+  extractTextFromLabels(
+    labels: string[],
+    pattern: SafeRegExp,
+    index: number
+  ): string[] {
+    const substrings = Array.of<string>()
 
     for (const label of labels) {
       if (pattern.test(label)) {
-        var match = pattern.exec(label)
+        const match = pattern.exec(label)
 
         if (
           match &&
           index <= match.length - 1 &&
-          substrings.indexOf(match[index]) == -1
+          !substrings.includes(match[index])
         ) {
           substrings.push(match[index])
         }

@@ -10,7 +10,7 @@ async function run(): Promise<void> {
 
     const action = new Action(token, github.context)
 
-    let output = await action.run(pattern, Number(group))
+    const output = await action.run(pattern, Number(group))
 
     core.setOutput('substrings', output)
   } catch (error) {

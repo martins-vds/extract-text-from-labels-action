@@ -1484,8 +1484,8 @@ function run() {
             const pattern = core.getInput('pattern', { required: true });
             const group = core.getInput('group', { required: true });
             const action = new action_1.Action(token, github.context);
-            let output = yield action.run(pattern, Number(group));
-            core.setOutput("substrings", output);
+            const output = yield action.run(pattern, Number(group));
+            core.setOutput('substrings', output);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -1542,24 +1542,27 @@ class Action {
     run(pattern, group) {
         return __awaiter(this, void 0, void 0, function* () {
             const labels = yield this.listLabelsOnIssue(this.token);
-            return this.extractTextFromLabels(labels, new safe_regex_1.SafeRegExp(pattern, 1000, "i"), group);
+            return this.extractTextFromLabels(labels, new safe_regex_1.SafeRegExp(pattern, 1000, 'i'), group);
         });
     }
     listLabelsOnIssue(token) {
         return __awaiter(this, void 0, void 0, function* () {
             // Fetch the list of labels attached to the issue that
             // triggered the workflow
-            let client = github.getOctokit(token);
-            const opts = client.issues.listLabelsOnIssue.endpoint.merge(Object.assign(Object.assign({}, this.context.repo), { issue_number: this.context.issue.number }));
-            return yield (yield client.paginate(opts)).reduce(l => l.name);
+            const client = github.getOctokit(token);
+            const labels = yield client
+                .paginate(client.issues.listLabelsOnIssue, Object.assign(Object.assign({}, this.context.repo), { issue_number: this.context.issue.number }));
+            return labels.map((label) => label.name);
         });
     }
     extractTextFromLabels(labels, pattern, index) {
-        let substrings = new Array();
+        const substrings = Array.of();
         for (const label of labels) {
             if (pattern.test(label)) {
-                var match = pattern.exec(label);
-                if (match && index <= match.length - 1 && substrings.indexOf(match[index]) == -1) {
+                const match = pattern.exec(label);
+                if (match &&
+                    index <= match.length - 1 &&
+                    !substrings.includes(match[index])) {
                     substrings.push(match[index]);
                 }
             }
@@ -2454,11 +2457,11 @@ class SafeRegExp extends RegExp {
      * test
      */
     test(string) {
-        var sandbox = {
+        const sandbox = {
             result: false
         };
-        var context = vm_1.default.createContext(sandbox);
-        var script = new vm_1.default.Script(`result = /${this.pattern}/.test(\'${string}\');`);
+        const context = vm_1.default.createContext(sandbox);
+        const script = new vm_1.default.Script(`result = /${this.pattern}/${this.flags}.test('${string}');`);
         try {
             // One could argue if a RegExp hasn't processed in a given time.
             // then, its likely it will take exponential time.
@@ -2473,11 +2476,11 @@ class SafeRegExp extends RegExp {
      * exec
      */
     exec(string) {
-        var sandbox = {
-            result: {}
+        const sandbox = {
+            result: null
         };
-        var context = vm_1.default.createContext(sandbox);
-        var script = new vm_1.default.Script(`result = /${this.pattern}/.exec(\'${string}\');`);
+        const context = vm_1.default.createContext(sandbox);
+        const script = new vm_1.default.Script(`result = /${this.pattern}/${this.flags}.exec('${string}');`);
         try {
             // One could argue if a RegExp hasn't processed in a given time.
             // then, its likely it will take exponential time.

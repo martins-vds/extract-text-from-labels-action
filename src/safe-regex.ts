@@ -15,15 +15,15 @@ export class SafeRegExp extends RegExp {
   /**
    * test
    */
-  public test(string: string): boolean {
-    var sandbox = {
+  test(string: string): boolean {
+    const sandbox = {
       result: false
     }
 
-    var context = vm.createContext(sandbox)
+    const context = vm.createContext(sandbox)
 
-    var script = new vm.Script(
-      `result = /${this.pattern}/${this.flags}.test(\'${string}\');`
+    const script = new vm.Script(
+      `result = /${this.pattern}/${this.flags}.test('${string}');`
     )
 
     try {
@@ -40,15 +40,15 @@ export class SafeRegExp extends RegExp {
   /**
    * exec
    */
-  public exec(string: string): RegExpExecArray {
-    var sandbox = {
-      result: <RegExpExecArray>{}
+  exec(string: string): RegExpExecArray {
+    const sandbox = {
+      result: null as RegExpExecArray
     }
 
-    var context = vm.createContext(sandbox)
+    const context = vm.createContext(sandbox)
 
-    var script = new vm.Script(
-      `result = /${this.pattern}/${this.flags}.exec(\'${string}\');`
+    const script = new vm.Script(
+      `result = /${this.pattern}/${this.flags}.exec('${string}');`
     )
 
     try {
