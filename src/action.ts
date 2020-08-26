@@ -12,7 +12,11 @@ export class Action {
   }
 
   async run(pattern: string, group: number): Promise<string[]> {
-    const labels = await this.listLabelsOnIssue(this.token)
+    const labels = await this.listLabelsOnIssue(
+      this.context.repo.owner,
+      this.context.repo.repo,
+      this.context.issue.number
+    )
 
     return this.extractTextFromLabels(
       labels,
@@ -21,14 +25,19 @@ export class Action {
     )
   }
 
-  async listLabelsOnIssue(token: string): Promise<string[]> {
+  async listLabelsOnIssue(
+    owner: string,
+    repo: string,
+    issue_number: number
+  ): Promise<string[]> {
     // Fetch the list of labels attached to the issue that
     // triggered the workflow
-    const client = github.getOctokit(token)
+    const client = github.getOctokit(this.token)
 
     const labels = await client.paginate(client.issues.listLabelsOnIssue, {
-      ...this.context.repo,
-      issue_number: this.context.issue.number
+      owner,
+      repo,
+      issue_number
     })
 
     return labels.map(label => label.name)
