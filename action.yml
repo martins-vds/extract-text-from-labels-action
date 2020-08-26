@@ -1,5 +1,6 @@
 name: 'Extract text from labels'
 description: 'Extract text from labels that match a certain pattern'
+icon: filter
 inputs:
   github-token:
     description: The GitHub token used to create an authenticated client
