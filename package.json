@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "extract-text-from-labels-action",
+  "version": "0.0.1",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "Action that extracts text from labels that match a certain pattern",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/martins-vds/extract-text-from-labels-action.git"
   },
   "keywords": [
     "actions",
     "node",
     "setup"
   ],
-  "author": "",
+  "author": "Vinny Martins",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.4",

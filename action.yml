@@ -1,11 +1,20 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Extract text from labels'
+description: 'Extract text from labels that match a certain pattern'
 inputs:
-  milliseconds: # change this
+  github-token:
+    description: The GitHub token used to create an authenticated client
+    default: ${{ github.token }}
+    required: false
+  pattern:
+    description: Valid javascript regex pattern that will be used to extract text from labels  
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  group:
+    description: The index of the capture group to be extracted from labels  
+    default: "0"
+    required: true
+outputs:
+  substrings: # id of output
+    description: 'The array of text extracted from labels'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: dist/index.js
