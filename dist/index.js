@@ -1541,18 +1541,21 @@ class Action {
     }
     run(pattern, group) {
         return __awaiter(this, void 0, void 0, function* () {
-            const labels = yield this.listLabelsOnIssue(this.token);
+            const labels = yield this.listLabelsOnIssue(this.context.repo.owner, this.context.repo.repo, this.context.issue.number);
             return this.extractTextFromLabels(labels, new safe_regex_1.SafeRegExp(pattern, 1000, 'i'), group);
         });
     }
-    listLabelsOnIssue(token) {
+    listLabelsOnIssue(owner, repo, issue_number) {
         return __awaiter(this, void 0, void 0, function* () {
             // Fetch the list of labels attached to the issue that
             // triggered the workflow
-            const client = github.getOctokit(token);
-            const labels = yield client
-                .paginate(client.issues.listLabelsOnIssue, Object.assign(Object.assign({}, this.context.repo), { issue_number: this.context.issue.number }));
-            return labels.map((label) => label.name);
+            const client = github.getOctokit(this.token);
+            const labels = yield client.paginate(client.issues.listLabelsOnIssue, {
+                owner,
+                repo,
+                issue_number
+            });
+            return labels.map(label => label.name);
         });
     }
     extractTextFromLabels(labels, pattern, index) {
